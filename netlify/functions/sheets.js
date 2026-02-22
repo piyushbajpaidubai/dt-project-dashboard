@@ -2,7 +2,7 @@ const { google } = require("googleapis");
 exports.handler = async (event) => {
   try {
     const privateKey = process.env.GOOGLE_PRIVATE_KEY
-      ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\\\n/g, "\\n")
+      ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\\\\\\\n|\\\\n/g, "\\n")
       : null;
     const auth = new google.auth.JWT({
       email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
