@@ -1,15 +1,12 @@
 const { google } = require("googleapis");
 exports.handler = async (event) => {
   try {
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY
-      ? process.env.GOOGLE_PRIVATE_KEY.split("\\\\n").join("\\n")
-      : null;
+    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
     const auth = new google.auth.JWT({
-      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: privateKey,
+      email: credentials.client_email,
+      key: credentials.private_key,
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
-    await auth.authorize();
     const sheets = google.sheets({ version: "v4", auth });
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
     if (event.httpMethod === "GET") {
@@ -37,4 +34,4 @@ exports.handler = async (event) => {
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
-}
+};
