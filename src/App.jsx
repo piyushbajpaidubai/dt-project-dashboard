@@ -5,13 +5,25 @@ const STORAGE_KEY = "dt-project-dashboard-v1";
 
 async function loadData() {
   try {
-    const r = localStorage.getItem(STORAGE_KEY);
-    return r ? JSON.parse(r) : null;
+    const res = await fetch("/.netlify/functions/sheets");
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (Object.keys(data).length === 0) return null;
+    const parsed = {};
+    for (const [k, v] of Object.entries(data)) {
+      try { parsed[k] = JSON.parse(v); }
+      catch { parsed[k] = v; }
+    }
+    return parsed;
   } catch { return null; }
 }
 async function saveData(data) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    await fetch("/.netlify/functions/sheets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
   } catch { /* silent */ }
 }
 // ─── DEFAULT STATE ────────────────────────────────────────────────────────────
