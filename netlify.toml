@@ -1,0 +1,15 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+```
+Actually, the safest way is to use the command prompt to create it. Run this:
+```
+notepad netlify.toml
+```
+It will ask "do you want to create a new file?" — click **Yes**. Then paste the content above and save.
+Then push again:
+```
+git add .
+git commit -m "fix netlify toml"
+git push
