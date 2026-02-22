@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
+```
+7. Press **Ctrl + S** to save and close Notepad
+---
+## Part 2 — Push to GitHub via Command Prompt
+Open your command prompt and run these **one at a time**:
+**Command 1:**
+```
+cd C:\\Users\\piyus\\my-app
+```
+**Command 2:**
+```
+git add .
+```
+**Command 3:**
+```
+git commit -m "fix function dependencies"
+```
+**Command 4:**
+```
+git push
