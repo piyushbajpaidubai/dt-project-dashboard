@@ -458,7 +458,7 @@ export default function App() {
           borderRight: "1px solid #e2e8f0",
           paddingRight: 20, marginRight: 4,
           fontFamily: "system-ui",
-        }}>DT</div>
+        }}>DesignTomorrow</div>
 
         {/* Project identity inputs */}
         <input value={data.projectCode} onChange={e => set("projectCode", e.target.value)}
