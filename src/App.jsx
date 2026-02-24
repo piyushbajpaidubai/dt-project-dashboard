@@ -382,6 +382,7 @@ export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
+  const [showBudget, setShowBudget] = useState(true);
   const saveTimer = useRef(null);
 
   // Load on mount
@@ -512,7 +513,12 @@ export default function App() {
           placeholder="AED —" />
 
         {/* 02 · BUDGET & FINANCIALS */}
-        <SectionHead title="Budget & Financials" index={1} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
+          <SectionHead title="Budget \& Financials" index={1} />
+          <button onClick={() => setShowBudget(v => !v)} style={{ background: "none", border: "1px solid #e2e8f0", cursor: "pointer", color: "#64748b", fontSize: 12, padding: "3px 10px", borderRadius: 4, marginBottom: 20, letterSpacing: "0.05em" }}>{showBudget ? "Hide" : "Show"}</button>
+        </div>
+        {showBudget && (
+          <>
         <TwoCol>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
@@ -536,6 +542,9 @@ export default function App() {
           <Field label="Target Invoice Milestone & Value" value={data.targetInvoice} onChange={v => set("targetInvoice", v)} placeholder="Milestone name / AED —" />
           <Field label="Invoice Due Date" value={data.invoiceDueDate} onChange={v => set("invoiceDueDate", v)} type="date" />
         </TwoCol>
+
+          </>
+        )}
 
         {/* 03 · PAYMENT STATUS */}
         <SectionHead title="Payment Status" index={2} />
