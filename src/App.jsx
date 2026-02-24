@@ -250,7 +250,7 @@ function ActionTable({ rows, onChange, label }) {
                 <button onClick={() => {
                   const next = rows.filter((_, j) => j !== i);
                   onChange("_replace", null, next);
-                }} style={styles.delBtn}>×</button>
+                }} style={styles.delBtn}>÷</button>
               </td>
             </tr>
           ))}
@@ -283,7 +283,7 @@ function ProgramTable({ rows, onChange }) {
               <td style={styles.td}><button onClick={() => {
                 const next = rows.filter((_, j) => j !== i);
                 onChange("_replace", null, next);
-              }} style={styles.delBtn}>×</button></td>
+              }} style={styles.delBtn}>÷</button></td>
             </tr>
           ))}
         </tbody>
@@ -542,17 +542,19 @@ export default function App() {
         {(() => {
           const ev = parseFloat((data.earnedValue || "").replace(/[^0-9.-]/g, ""));
           const ac = parseFloat((data.actualSpent || "").replace(/[^0-9.-]/g, ""));
-          if (isNaN(ev) || isNaN(ac) || ac === 0) return null;
-          const cpi = ev / ac;
-          let bg, fg;
-          if (cpi >= 1)        { bg = "#f0fdf4"; fg = "#16a34a"; }
-          else if (cpi >= 0.9) { bg = "#fffbeb"; fg = "#d97706"; }
-          else                 { bg = "#fef2f2"; fg = "#dc2626"; }
+          const hasValues = !isNaN(ev) && !isNaN(ac) && ac !== 0;
+          const cpi = hasValues ? ev / ac : null;
+          let bg = "#f1f5f9", fg = "#64748b";
+          if (cpi !== null) {
+            if (cpi >= 1)        { bg = "#f0fdf4"; fg = "#16a34a"; }
+            else if (cpi >= 0.9) { bg = "#fffbeb"; fg = "#d97706"; }
+            else                 { bg = "#fef2f2"; fg = "#dc2626"; }
+          }
           return (
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6, marginBottom: 14 }}>
               <div style={styles.fieldLabel}>CPI</div>
-              <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cpi.toFixed(2)}</div>
-              <div style={{ color: "#94a3b8", fontSize: 11 }}>(Earned Value � Actual Spent)</div>
+              <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cpi !== null ? cpi.toFixed(2) : "—"}</div>
+              <div style={{ color: "#94a3b8", fontSize: 11 }}>(Earned Value ÷ Actual Spent)</div>
             </div>
           );
         })()}
