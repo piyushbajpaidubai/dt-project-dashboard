@@ -184,7 +184,7 @@ function ProgressBar({ value, onChange }) {
         <input
           type="number" min={0} max={100} value={value}
           onChange={e => onChange(e.target.value)}
-          style={{ width: 52, fontSize: 13, border: "none", borderBottom: "1.5px solid #e2e8f0", outline: "none", background: "transparent", textAlign: "right", fontWeight: 700 }}
+          style={{ width: 52, fontSize: 13, border: "none", borderBottom: "1.5px solid #e2e8f0", outline: "none", background: "transparent", textAlign: "right", fontWeight: 700, color: "#000000" }}
         />
         <span style={{ fontSize: 12, color: "#64748b" }}>%</span>
       </div>
