@@ -41,6 +41,8 @@ const defaultState = {
   externalBudget: "",
   availableBudget: "",
   actualSpent: "",
+  invoiceSubmitted: "",
+  externalActualSpent: "",
   projectStatus: "",
   progressPct: "",
   stagePlannedPct: "",
@@ -558,6 +560,27 @@ export default function App() {
               <div style={styles.fieldLabel}>CPI</div>
               <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cpi !== null ? cpi.toFixed(2) : "—"}</div>
               <div style={{ color: "#94a3b8", fontSize: 11 }}>(Earned Value ÷ Actual Spent)</div>
+            </div>
+          );
+        })()}
+        <Field label="Value of Invoice Submitted To-Date" value={data.invoiceSubmitted} onChange={v => set("invoiceSubmitted", v)} placeholder="AED —" />
+        <Field label="Total Expense To-Date (Internal + % External)" value={data.externalActualSpent} onChange={v => set("externalActualSpent", v)} placeholder="AED —" />
+        {(() => {
+          const inv = parseFloat((data.invoiceSubmitted || "").replace(/[^0-9.-]/g, ""));
+          const exp = parseFloat((data.externalActualSpent || "").replace(/[^0-9.-]/g, ""));
+          const hasValues = !isNaN(inv) && !isNaN(exp) && exp !== 0;
+          const cv = hasValues ? inv / exp : null;
+          let bg = "#f1f5f9", fg = "#64748b";
+          if (cv !== null) {
+            if (cv >= 1)        { bg = "#f0fdf4"; fg = "#16a34a"; }
+            else if (cv >= 0.9) { bg = "#fffbeb"; fg = "#d97706"; }
+            else                { bg = "#fef2f2"; fg = "#dc2626"; }
+          }
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6, marginBottom: 14 }}>
+              <div style={styles.fieldLabel}>Cash Variance</div>
+              <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cv !== null ? cv.toFixed(2) : "—"}</div>
+              <div style={{ color: "#94a3b8", fontSize: 11 }}>(Invoice Submitted ÷ Total Expense To-Date)</div>
             </div>
           );
         })()}
