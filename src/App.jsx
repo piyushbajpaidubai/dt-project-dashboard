@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// ─── STORAGE HELPERS ─────────────────────────────────────────────────────────
+// âââ STORAGE HELPERS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const STORAGE_KEY = "dt-project-dashboard-v1";
 
 async function loadData() {
@@ -26,7 +26,7 @@ async function saveData(data) {
     });
   } catch { /* silent */ }
 }
-// ─── DEFAULT STATE ────────────────────────────────────────────────────────────
+// âââ DEFAULT STATE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const defaultState = {
   projectCode: "",
   projectName: "",
@@ -70,7 +70,7 @@ const defaultState = {
   ],
 };
 
-// ─── TINY COMPONENTS ─────────────────────────────────────────────────────────
+// âââ TINY COMPONENTS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function Field({ label, value, onChange, type = "text", placeholder = "", wide = false, mono = false }) {
   const base = {
     fontFamily: mono ? "'JetBrains Mono', 'Fira Mono', monospace" : "inherit",
@@ -153,10 +153,10 @@ function StatusBadge({ value, onChange }) {
           outline: "none",
         }}
       >
-        <option value="">— Select —</option>
+        <option value="">â Select â</option>
         {options.map(o => <option key={o}>{o}</option>)}
       </select>
-      <span style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", fontSize: 10, color: c.fg }}>▾</span>
+      <span style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", fontSize: 10, color: c.fg }}>â¾</span>
     </div>
   );
 }
@@ -168,10 +168,10 @@ function BudgetStatusBadge({ value, onChange }) {
     <div style={{ position: "relative", display: "inline-block" }}>
       <select value={value} onChange={e => onChange(e.target.value)}
         style={{ appearance: "none", background: c.bg, color: c.fg, border: "none", borderRadius: 4, padding: "3px 24px 3px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer", outline: "none" }}>
-        <option value="">— Select —</option>
+        <option value="">â Select â</option>
         {opts.map(o => <option key={o}>{o}</option>)}
       </select>
-      <span style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", fontSize: 10, color: c.fg }}>▾</span>
+      <span style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", fontSize: 10, color: c.fg }}>â¾</span>
     </div>
   );
 }
@@ -201,7 +201,7 @@ function SectionHead({ title, index }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20, marginTop: index === 0 ? 0 : 10 }}>
       <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "0.12em", color: "#94a3b8", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-        {String(index + 1).padStart(2, "0")} · {title}
+        {String(index + 1).padStart(2, "0")} Â· {title}
       </div>
       <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
     </div>
@@ -236,7 +236,7 @@ function ActionTable({ rows, onChange, label }) {
               <td style={styles.tdNum}>{String(i + 1).padStart(2, "0")}</td>
               <td style={styles.td}>
                 <input value={row.action} onChange={e => onChange(i, "action", e.target.value)}
-                  placeholder="Enter action item…"
+                  placeholder="Enter action itemâ¦"
                   style={styles.inlineInput} />
               </td>
               <td style={styles.td}>
@@ -252,7 +252,7 @@ function ActionTable({ rows, onChange, label }) {
                 <button onClick={() => {
                   const next = rows.filter((_, j) => j !== i);
                   onChange("_replace", null, next);
-                }} style={styles.delBtn}>÷</button>
+                }} style={styles.delBtn}>Ã·</button>
               </td>
             </tr>
           ))}
@@ -285,7 +285,7 @@ function ProgramTable({ rows, onChange }) {
               <td style={styles.td}><button onClick={() => {
                 const next = rows.filter((_, j) => j !== i);
                 onChange("_replace", null, next);
-              }} style={styles.delBtn}>÷</button></td>
+              }} style={styles.delBtn}>Ã·</button></td>
             </tr>
           ))}
         </tbody>
@@ -300,7 +300,7 @@ function BalanceIndicator({ available, spent }) {
   const sp = parseFloat(spent.replace(/[^0-9.-]/g, "")) || 0;
   const balance = av - sp;
   const isPos = balance >= 0;
-  const formatted = balance === 0 ? "—" : (isPos ? "+" : "") + balance.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const formatted = balance === 0 ? "â" : (isPos ? "+" : "") + balance.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   return (
     <div style={{
       display: "inline-flex", alignItems: "center", gap: 6,
@@ -308,13 +308,13 @@ function BalanceIndicator({ available, spent }) {
       color: balance === 0 ? "#64748b" : isPos ? "#166534" : "#991b1b",
       borderRadius: 4, padding: "4px 12px", fontSize: 13, fontWeight: 700,
     }}>
-      {balance !== 0 && <span style={{ fontSize: 11 }}>{isPos ? "▲" : "▼"}</span>}
+      {balance !== 0 && <span style={{ fontSize: 11 }}>{isPos ? "â²" : "â¼"}</span>}
       Balance: {formatted}
     </div>
   );
 }
 
-// ─── STYLES ──────────────────────────────────────────────────────────────────
+// âââ STYLES ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const styles = {
   fieldLabel: {
     fontSize: 10,
@@ -378,7 +378,7 @@ const styles = {
   },
 };
 
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+// âââ MAIN APP âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function App() {
   const [data, setData] = useState(defaultState);
   const [loaded, setLoaded] = useState(false);
@@ -433,12 +433,12 @@ export default function App() {
   if (!loaded) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f8fafc", fontFamily: "system-ui" }}>
-        <div style={{ fontSize: 13, color: "#94a3b8", letterSpacing: "0.08em" }}>Loading…</div>
+        <div style={{ fontSize: 13, color: "#94a3b8", letterSpacing: "0.08em" }}>Loadingâ¦</div>
       </div>
     );
   }
 
-  const headerTitle = [data.projectCode, data.projectName, data.client].filter(Boolean).join(" · ") || "Untitled Project";
+  const headerTitle = [data.projectCode, data.projectName, data.client].filter(Boolean).join(" Â· ") || "Untitled Project";
 
   return (
     <div style={{
@@ -447,7 +447,7 @@ export default function App() {
       fontFamily: "'DM Sans', 'IBM Plex Sans', system-ui, sans-serif",
       color: "#0f172a",
     }}>
-      {/* ── TOP NAV ──────────────────────────────────────────────────────── */}
+      {/* ââ TOP NAV ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <div style={{
         position: "sticky", top: 0, zIndex: 100,
         background: "#ffffff",
@@ -469,11 +469,11 @@ export default function App() {
         <input value={data.projectCode} onChange={e => set("projectCode", e.target.value)}
           placeholder="PROJECT CODE"
           style={{ ...navInput, width: 110, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }} />
-        <span style={{ color: "#e2e8f0", fontWeight: 300 }}>·</span>
+        <span style={{ color: "#e2e8f0", fontWeight: 300 }}>Â·</span>
         <input value={data.projectName} onChange={e => set("projectName", e.target.value)}
           placeholder="Project Name"
           style={{ ...navInput, width: 200 }} />
-        <span style={{ color: "#e2e8f0", fontWeight: 300 }}>·</span>
+        <span style={{ color: "#e2e8f0", fontWeight: 300 }}>Â·</span>
         <input value={data.client} onChange={e => set("client", e.target.value)}
           placeholder="Client"
           style={{ ...navInput, width: 160 }} />
@@ -489,14 +489,14 @@ export default function App() {
 
         {/* Save indicator */}
         <div style={{ fontSize: 11, color: saving ? "#f59e0b" : "#10b981", letterSpacing: "0.04em", minWidth: 80, textAlign: "right" }}>
-          {saving ? "Saving…" : savedAt ? `Saved ${savedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}
+          {saving ? "Savingâ¦" : savedAt ? `Saved ${savedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}
         </div>
       </div>
 
-      {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
+      {/* ââ MAIN CONTENT âââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "40px 32px 80px" }}>
 
-        {/* 01 · PROJECT OVERVIEW */}
+        {/* 01 Â· PROJECT OVERVIEW */}
         <SectionHead title="Project Overview" index={0} />
         <TwoCol>
           <Field label="Key Personnel / Project Lead" value={data.keyPersonnel}
@@ -510,111 +510,16 @@ export default function App() {
         </TwoCol>
         <Field label="Subconsultants" value={data.subconsultants} onChange={v => set("subconsultants", v)}
           type="textarea"
-          placeholder="List all sub-consultants with disciplines  (e.g. MEP – [Firm]  |  Structure – [Firm]  |  Landscape – [Firm])" />
+          placeholder="List all sub-consultants with disciplines  (e.g. MEP â [Firm]  |  Structure â [Firm]  |  Landscape â [Firm])" />
         <Field label="Contract Value" value={data.contractValue} onChange={v => set("contractValue", v)}
-          placeholder="AED —" />
+          placeholder="AED â" />
 
         <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
-        {/* 02 · BUDGET & FINANCIALS */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
-          <SectionHead title="Budget & Financials" index={1} />
-          <button onClick={() => setShowBudget(v => !v)} style={{ background: "none", border: "1px solid #e2e8f0", cursor: "pointer", color: "#64748b", fontSize: 12, padding: "3px 10px", borderRadius: 4, marginBottom: 20, letterSpacing: "0.05em" }}>{showBudget ? "Hide" : "Show"}</button>
-        </div>
-        {showBudget && (
-          <>
-        <TwoCol>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-              <div style={styles.fieldLabel}>Budget Status</div>
-              <BudgetStatusBadge value={data.budgetStatus} onChange={v => set("budgetStatus", v)} />
-            </div>
-          </div>
-          <div />
-        </TwoCol>
-        <TwoCol>
-          <Field label="Internal Fee" value={data.internalBudget} onChange={v => set("internalBudget", v)} placeholder="AED —" />
-          <Field label="External Fees" value={data.externalBudget} onChange={v => set("externalBudget", v)} placeholder="AED —" />
-          <Field label="Available Resource Budget To-Date" value={data.availableBudget} onChange={v => set("availableBudget", v)} placeholder="AED —" />
-          <Field label="Actual Resource Spent To-Date" value={data.actualSpent} onChange={v => set("actualSpent", v)} placeholder="AED —" />        
-        </TwoCol>
-        <div style={{ marginBottom: 14 }}>
-          <div style={styles.fieldLabel}>Balance To-Date</div>
-          <BalanceIndicator available={data.availableBudget} spent={data.actualSpent} />
-        </div>
-          <Field label="Earned Value" value={data.earnedValue} onChange={v => set("earnedValue", v)} placeholder="AED —" />
-
-        {(() => {
-          const ev = parseFloat((data.earnedValue || "").replace(/[^0-9.-]/g, ""));
-          const ac = parseFloat((data.actualSpent || "").replace(/[^0-9.-]/g, ""));
-          const hasValues = !isNaN(ev) && !isNaN(ac) && ac !== 0;
-          const cpi = hasValues ? ev / ac : null;
-          let bg = "#f1f5f9", fg = "#64748b";
-          if (cpi !== null) {
-            if (cpi >= 1)        { bg = "#f0fdf4"; fg = "#16a34a"; }
-            else if (cpi >= 0.9) { bg = "#fffbeb"; fg = "#d97706"; }
-            else                 { bg = "#fef2f2"; fg = "#dc2626"; }
-          }
-          return (
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6, marginBottom: 14 }}>
-              <div style={styles.fieldLabel}>CPI</div>
-              <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cpi !== null ? cpi.toFixed(2) : "—"}</div>
-              <div style={{ color: "#94a3b8", fontSize: 11 }}>(Earned Value ÷ Actual Spent)</div>
-            </div>
-          );
-        })()}
-        <Field label="Value of Invoice Submitted To-Date" value={data.invoiceSubmitted} onChange={v => set("invoiceSubmitted", v)} placeholder="AED —" />
-        <Field label="Total Expense To-Date (Internal + % External)" value={data.externalActualSpent} onChange={v => set("externalActualSpent", v)} placeholder="AED —" />
-        {(() => {
-          const inv = parseFloat((data.invoiceSubmitted || "").replace(/[^0-9.-]/g, ""));
-          const exp = parseFloat((data.externalActualSpent || "").replace(/[^0-9.-]/g, ""));
-          const hasValues = !isNaN(inv) && !isNaN(exp) && exp !== 0;
-          const cv = hasValues ? inv / exp : null;
-          let bg = "#f1f5f9", fg = "#64748b";
-          if (cv !== null) {
-            if (cv >= 1)        { bg = "#f0fdf4"; fg = "#16a34a"; }
-            else if (cv >= 0.9) { bg = "#fffbeb"; fg = "#d97706"; }
-            else                { bg = "#fef2f2"; fg = "#dc2626"; }
-          }
-          return (
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6, marginBottom: 14 }}>
-              <div style={styles.fieldLabel}>Cash Variance</div>
-              <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cv !== null ? cv.toFixed(2) : "—"}</div>
-              <div style={{ color: "#94a3b8", fontSize: 11 }}>(Invoice Submitted ÷ Total Expense To-Date)</div>
-            </div>
-          );
-        })()}
-        <TwoCol>
-          <Field label="Target Invoice Milestone & Value" value={data.targetInvoice} onChange={v => set("targetInvoice", v)} placeholder="Milestone name / AED —" />
-          <Field label="Invoice Due Date" value={data.invoiceDueDate} onChange={v => set("invoiceDueDate", v)} type="date" />
-        </TwoCol>
-
-          </>
-        )}
-
-        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
-
-        {/* 03 · PAYMENT STATUS */}
-        <SectionHead title="Payment Status" index={2} />
-        <TwoCol>
-          <Field label="Client Payments" value={data.clientPayments} onChange={v => set("clientPayments", v)}
-            type="textarea" placeholder="Enter invoices paid to date per contract payment milestones" />
-          <Field label="Sub-Consultant Payments" value={data.subsPayments} onChange={v => set("subsPayments", v)}
-            type="textarea" placeholder="Enter subs invoices paid to date per contract payment milestones" />
-        </TwoCol>
-
-        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
-
-        {/* 04 · PROGRAM */}
-        <SectionHead title="Program" index={3} />
-        <ProgramTable rows={data.programRows} onChange={setProgramRow} />
-
-        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
-
-        {/* 05 · PROJECT STATUS */}
-        <SectionHead title="Project Status" index={4} />
+        {/* 02 Â· PROJECT STATUS */}
+        <SectionHead title="Project Status" index={1} />
         <Field label="Current Stage & Status" value={data.projectStatus} onChange={v => set("projectStatus", v)}
-          placeholder="Enter current stage  (e.g. Schematic Design – in progress)" />
+          placeholder="Enter current stage  (e.g. Schematic Design â in progress)" />
         <ProgressBar value={data.progressPct} onChange={v => set("progressPct", v)} />
         {/* Stage Progress & Status */}
         <TwoCol>
@@ -649,10 +554,105 @@ export default function App() {
 
         <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
-        {/* 06 · VARIATIONS & RISKS */}
+        {/* 03 Â· BUDGET & FINANCIALS */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
+          <SectionHead title="Budget & Financials" index={2} />
+          <button onClick={() => setShowBudget(v => !v)} style={{ background: "none", border: "1px solid #e2e8f0", cursor: "pointer", color: "#64748b", fontSize: 12, padding: "3px 10px", borderRadius: 4, marginBottom: 20, letterSpacing: "0.05em" }}>{showBudget ? "Hide" : "Show"}</button>
+        </div>
+        {showBudget && (
+          <>
+        <TwoCol>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+              <div style={styles.fieldLabel}>Budget Status</div>
+              <BudgetStatusBadge value={data.budgetStatus} onChange={v => set("budgetStatus", v)} />
+            </div>
+          </div>
+          <div />
+        </TwoCol>
+        <TwoCol>
+          <Field label="Internal Fee" value={data.internalBudget} onChange={v => set("internalBudget", v)} placeholder="AED â" />
+          <Field label="External Fees" value={data.externalBudget} onChange={v => set("externalBudget", v)} placeholder="AED â" />
+          <Field label="Available Resource Budget To-Date" value={data.availableBudget} onChange={v => set("availableBudget", v)} placeholder="AED â" />
+          <Field label="Actual Resource Spent To-Date" value={data.actualSpent} onChange={v => set("actualSpent", v)} placeholder="AED â" />        
+        </TwoCol>
+        <div style={{ marginBottom: 14 }}>
+          <div style={styles.fieldLabel}>Balance To-Date</div>
+          <BalanceIndicator available={data.availableBudget} spent={data.actualSpent} />
+        </div>
+          <Field label="Earned Value" value={data.earnedValue} onChange={v => set("earnedValue", v)} placeholder="AED â" />
+
+        {(() => {
+          const ev = parseFloat((data.earnedValue || "").replace(/[^0-9.-]/g, ""));
+          const ac = parseFloat((data.actualSpent || "").replace(/[^0-9.-]/g, ""));
+          const hasValues = !isNaN(ev) && !isNaN(ac) && ac !== 0;
+          const cpi = hasValues ? ev / ac : null;
+          let bg = "#f1f5f9", fg = "#64748b";
+          if (cpi !== null) {
+            if (cpi >= 1)        { bg = "#f0fdf4"; fg = "#16a34a"; }
+            else if (cpi >= 0.9) { bg = "#fffbeb"; fg = "#d97706"; }
+            else                 { bg = "#fef2f2"; fg = "#dc2626"; }
+          }
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6, marginBottom: 14 }}>
+              <div style={styles.fieldLabel}>CPI</div>
+              <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cpi !== null ? cpi.toFixed(2) : "â"}</div>
+              <div style={{ color: "#94a3b8", fontSize: 11 }}>(Earned Value Ã· Actual Spent)</div>
+            </div>
+          );
+        })()}
+        <Field label="Value of Invoice Submitted To-Date" value={data.invoiceSubmitted} onChange={v => set("invoiceSubmitted", v)} placeholder="AED â" />
+        <Field label="Total Expense To-Date (Internal + % External)" value={data.externalActualSpent} onChange={v => set("externalActualSpent", v)} placeholder="AED â" />
+        {(() => {
+          const inv = parseFloat((data.invoiceSubmitted || "").replace(/[^0-9.-]/g, ""));
+          const exp = parseFloat((data.externalActualSpent || "").replace(/[^0-9.-]/g, ""));
+          const hasValues = !isNaN(inv) && !isNaN(exp) && exp !== 0;
+          const cv = hasValues ? inv / exp : null;
+          let bg = "#f1f5f9", fg = "#64748b";
+          if (cv !== null) {
+            if (cv >= 1)        { bg = "#f0fdf4"; fg = "#16a34a"; }
+            else if (cv >= 0.9) { bg = "#fffbeb"; fg = "#d97706"; }
+            else                { bg = "#fef2f2"; fg = "#dc2626"; }
+          }
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6, marginBottom: 14 }}>
+              <div style={styles.fieldLabel}>Cash Variance</div>
+              <div style={{ background: bg, color: fg, fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", padding: "3px 10px", borderRadius: 4 }}>{cv !== null ? cv.toFixed(2) : "â"}</div>
+              <div style={{ color: "#94a3b8", fontSize: 11 }}>(Invoice Submitted Ã· Total Expense To-Date)</div>
+            </div>
+          );
+        })()}
+        <TwoCol>
+          <Field label="Target Invoice Milestone & Value" value={data.targetInvoice} onChange={v => set("targetInvoice", v)} placeholder="Milestone name / AED â" />
+          <Field label="Invoice Due Date" value={data.invoiceDueDate} onChange={v => set("invoiceDueDate", v)} type="date" />
+        </TwoCol>
+
+          </>
+        )}
+
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
+
+        {/* 04 Â· PAYMENT STATUS */}
+        <SectionHead title="Payment Status" index={3} />
+        <TwoCol>
+          <Field label="Client Payments" value={data.clientPayments} onChange={v => set("clientPayments", v)}
+            type="textarea" placeholder="Enter invoices paid to date per contract payment milestones" />
+          <Field label="Sub-Consultant Payments" value={data.subsPayments} onChange={v => set("subsPayments", v)}
+            type="textarea" placeholder="Enter subs invoices paid to date per contract payment milestones" />
+        </TwoCol>
+
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
+
+        {/* 05 Â· PROGRAM */}
+        <SectionHead title="Program" index={4} />
+        <ProgramTable rows={data.programRows} onChange={setProgramRow} />
+
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
+
+        {/* 06 Â· VARIATIONS & RISKS */}
         <SectionHead title="Variations & Risks" index={5} />
         <TwoCol>
-          <Field label="Potential Variations — Plan of Action" value={data.potentialVariations}
+          <Field label="Potential Variations â Plan of Action" value={data.potentialVariations}
             onChange={v => set("potentialVariations", v)} type="textarea"
             placeholder="Note potential variations and plan of action" />
           <Field label="Critical Issues & Risks" value={data.criticalIssues}
@@ -662,7 +662,7 @@ export default function App() {
 
         <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
-        {/* 07 · ACTIONS */}
+        {/* 07 Â· ACTIONS */}
         <SectionHead title="Weekly Actions" index={6} />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 40px" }}>
           <ActionTable
@@ -679,7 +679,7 @@ export default function App() {
 
       </div>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
+      {/* ââ FOOTER âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <div style={{
         borderTop: "1px solid #e2e8f0",
         padding: "16px 32px",
@@ -687,7 +687,7 @@ export default function App() {
         background: "#ffffff",
       }}>
         <span style={{ fontSize: 11, color: "#cbd5e1", letterSpacing: "0.06em" }}>
-          DT ARCHITECTURE & DESIGN · CONFIDENTIAL · INTERNAL USE ONLY
+          DT ARCHITECTURE & DESIGN Â· CONFIDENTIAL Â· INTERNAL USE ONLY
         </span>
         <span style={{ fontSize: 11, color: "#cbd5e1" }}>
           {new Date().getFullYear()}
