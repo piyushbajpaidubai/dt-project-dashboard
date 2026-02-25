@@ -11,7 +11,7 @@ async function loadData() {
     if (Object.keys(data).length === 0) return null;
     const parsed = {};
     for (const [k, v] of Object.entries(data)) {
-      try { parsed[k] = JSON.parse(v); }
+      try { parsed[k] = JSON.parse(v); }h
       catch { parsed[k] = v; }
     }
     return parsed;
@@ -22,7 +22,7 @@ async function saveData(data) {
     await fetch("/.netlify/functions/sheets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data),h
     });
   } catch { /* silent */ }
 }
