@@ -512,7 +512,7 @@ export default function App() {
         <Field label="Contract Value" value={data.contractValue} onChange={v => set("contractValue", v)}
           placeholder="AED —" />
 
-        {/* 02 · BUDGET & FINANCIALS */}h
+        {/* 02 · BUDGET & FINANCIALS */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
           <SectionHead title="Budget & Financials" index={1} />
           <button onClick={() => setShowBudget(v => !v)} style={{ background: "none", border: "1px solid #e2e8f0", cursor: "pointer", color: "#64748b", fontSize: 12, padding: "3px 10px", borderRadius: 4, marginBottom: 20, letterSpacing: "0.05em" }}>{showBudget ? "Hide" : "Show"}</button>
