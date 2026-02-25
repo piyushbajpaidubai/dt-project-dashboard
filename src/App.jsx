@@ -9,7 +9,7 @@ async function loadData() {
     if (!res.ok) return null;
     const data = await res.json();
     if (Object.keys(data).length === 0) return null;
-    const parsed = {};
+    const parsed = {};h
     for (const [k, v] of Object.entries(data)) {
       try { parsed[k] = JSON.parse(v); }
       catch { parsed[k] = v; }
@@ -198,7 +198,7 @@ function ProgressBar({ value, onChange }) {
 function SectionHead({ title, index }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20, marginTop: index === 0 ? 0 : 10 }}>
-      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#94a3b8", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+      <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.12em", color: "#94a3b8", textTransform: "uppercase", whiteSpace: "nowrap" }}>
         {String(index + 1).padStart(2, "0")} · {title}
       </div>
       <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
