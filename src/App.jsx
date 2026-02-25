@@ -514,7 +514,7 @@ export default function App() {
         <Field label="Contract Value" value={data.contractValue} onChange={v => set("contractValue", v)}
           placeholder="AED —" />
 
-        <hr style={{ border: 'none', borderTop: '1px dashed #334155', margin: '32px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
         {/* 02 · BUDGET & FINANCIALS */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
@@ -592,7 +592,7 @@ export default function App() {
           </>
         )}
 
-        <hr style={{ border: 'none', borderTop: '1px dashed #334155', margin: '32px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
         {/* 03 · PAYMENT STATUS */}
         <SectionHead title="Payment Status" index={2} />
@@ -603,13 +603,13 @@ export default function App() {
             type="textarea" placeholder="Enter subs invoices paid to date per contract payment milestones" />
         </TwoCol>
 
-        <hr style={{ border: 'none', borderTop: '1px dashed #334155', margin: '32px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
         {/* 04 · PROGRAM */}
         <SectionHead title="Program" index={3} />
         <ProgramTable rows={data.programRows} onChange={setProgramRow} />
 
-        <hr style={{ border: 'none', borderTop: '1px dashed #334155', margin: '32px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
         {/* 05 · PROJECT STATUS */}
         <SectionHead title="Project Status" index={4} />
@@ -647,7 +647,7 @@ export default function App() {
           );
         })()}
 
-        <hr style={{ border: 'none', borderTop: '1px dashed #334155', margin: '32px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
         {/* 06 · VARIATIONS & RISKS */}
         <SectionHead title="Variations & Risks" index={5} />
@@ -660,7 +660,7 @@ export default function App() {
             placeholder="Identify critical issues, risks, and mitigation strategy" />
         </TwoCol>
 
-        <hr style={{ border: 'none', borderTop: '1px dashed #334155', margin: '32px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '32px 0' }} />
 
         {/* 07 · ACTIONS */}
         <SectionHead title="Weekly Actions" index={6} />
