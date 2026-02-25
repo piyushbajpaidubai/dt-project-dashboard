@@ -532,7 +532,7 @@ export default function App() {
           <Field label="Internal Fee" value={data.internalBudget} onChange={v => set("internalBudget", v)} placeholder="AED —" />
           <Field label="External Fees" value={data.externalBudget} onChange={v => set("externalBudget", v)} placeholder="AED —" />
           <Field label="Available Resource Budget To-Date" value={data.availableBudget} onChange={v => set("availableBudget", v)} placeholder="AED —" />
-          <Field label="Actual Spent To-Date" value={data.actualSpent} onChange={v => set("actualSpent", v)} placeholder="AED —" />
+          <Field label="Actual Resource Spent To-Date" value={data.actualSpent} onChange={v => set("actualSpent", v)} placeholder="AED —" />
           <Field label="Earned Value" value={data.earnedValue} onChange={v => set("earnedValue", v)} placeholder="AED —" />
         </TwoCol>
         <div style={{ marginBottom: 14 }}>
