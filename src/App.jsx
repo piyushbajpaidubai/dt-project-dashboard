@@ -512,7 +512,7 @@ export default function App() {
         <Field label="Contract Value" value={data.contractValue} onChange={v => set("contractValue", v)}
           placeholder="AED —" />
 
-        {/* 02 · BUDGET & FINANCIALS */}
+        {/* 02 · BUDGET & FINANCIALS */}h
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
           <SectionHead title="Budget & Financials" index={1} />
           <button onClick={() => setShowBudget(v => !v)} style={{ background: "none", border: "1px solid #e2e8f0", cursor: "pointer", color: "#64748b", fontSize: 12, padding: "3px 10px", borderRadius: 4, marginBottom: 20, letterSpacing: "0.05em" }}>{showBudget ? "Hide" : "Show"}</button>
@@ -532,13 +532,14 @@ export default function App() {
           <Field label="Internal Fee" value={data.internalBudget} onChange={v => set("internalBudget", v)} placeholder="AED —" />
           <Field label="External Fees" value={data.externalBudget} onChange={v => set("externalBudget", v)} placeholder="AED —" />
           <Field label="Available Resource Budget To-Date" value={data.availableBudget} onChange={v => set("availableBudget", v)} placeholder="AED —" />
-          <Field label="Actual Resource Spent To-Date" value={data.actualSpent} onChange={v => set("actualSpent", v)} placeholder="AED —" />
-          <Field label="Earned Value" value={data.earnedValue} onChange={v => set("earnedValue", v)} placeholder="AED —" />
+          <Field label="Actual Resource Spent To-Date" value={data.actualSpent} onChange={v => set("actualSpent", v)} placeholder="AED —" />        
         </TwoCol>
         <div style={{ marginBottom: 14 }}>
           <div style={styles.fieldLabel}>Balance To-Date</div>
           <BalanceIndicator available={data.availableBudget} spent={data.actualSpent} />
         </div>
+          <Field label="Earned Value" value={data.earnedValue} onChange={v => set("earnedValue", v)} placeholder="AED —" />
+
         {(() => {
           const ev = parseFloat((data.earnedValue || "").replace(/[^0-9.-]/g, ""));
           const ac = parseFloat((data.actualSpent || "").replace(/[^0-9.-]/g, ""));
