@@ -576,8 +576,12 @@ export default function App() {
             type="textarea" placeholder="Enter subs invoices paid to date per contract payment milestones" />
         </TwoCol>
 
-        {/* 04 · PROJECT STATUS */}
-        <SectionHead title="Project Status" index={3} />
+        {/* 04 · PROGRAM */}
+        <SectionHead title="Program" index={3} />
+        <ProgramTable rows={data.programRows} onChange={setProgramRow} />
+
+        {/* 05 · PROJECT STATUS */}
+        <SectionHead title="Project Status" index={4} />
         <Field label="Current Stage & Status" value={data.projectStatus} onChange={v => set("projectStatus", v)}
           placeholder="Enter current stage  (e.g. Schematic Design – in progress)" />
         <ProgressBar value={data.progressPct} onChange={v => set("progressPct", v)} />
@@ -611,10 +615,6 @@ export default function App() {
             </div>
           );
         })()}
-
-        {/* 05 · PROGRAM */}
-        <SectionHead title="Program" index={4} />
-        <ProgramTable rows={data.programRows} onChange={setProgramRow} />
 
         {/* 06 · VARIATIONS & RISKS */}
         <SectionHead title="Variations & Risks" index={5} />
