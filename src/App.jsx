@@ -51,6 +51,11 @@ const defaultState = {
   invoiceDueDate: "",
   clientPayments: "",
   subsPayments: "",
+  paymentRows: [
+    { stage: "", client: "", subs: "" },
+    { stage: "", client: "", subs: "" },
+    { stage: "", client: "", subs: "" },
+  ],
   programRows: [
     { stage: "", baseline: "", actual: "" },
     { stage: "", baseline: "", actual: "" },
@@ -264,6 +269,37 @@ function ActionTable({ rows, onChange, label }) {
   );
 }
 
+function PaymentTable({ rows, onChange }) {
+  return (
+    <div style={{ marginBottom: 8 }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th style={{ ...styles.th, textAlign: "left", width: "34%" }}>Stage</th>
+            <th style={{ ...styles.th, textAlign: "left" }}>Client Payment</th>
+            <th style={{ ...styles.th, textAlign: "left" }}>Sub-Consultant Payment</th>
+            <th style={{ ...styles.th, width: 32 }}></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>
+              <td style={styles.td}><input value={row.stage} onChange={e => onChange(i, "stage", e.target.value)} placeholder="Stage name" style={styles.inlineInput} /></td>
+              <td style={styles.td}><input value={row.client} onChange={e => onChange(i, "client", e.target.value)} placeholder="AED —" style={styles.inlineInput} /></td>
+              <td style={styles.td}><input value={row.subs} onChange={e => onChange(i, "subs", e.target.value)} placeholder="AED —" style={styles.inlineInput} /></td>
+              <td style={styles.td}><button onClick={() => {
+                const next = rows.filter((_, j) => j !== i);
+                onChange("_replace", null, next);
+              }} style={styles.delBtn}>÷</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={() => onChange("_add", null, null)} style={styles.addBtn}>+ Add stage</button>
+    </div>
+  );
+}
+
 function ProgramTable({ rows, onChange }) {
   return (
     <div style={{ marginBottom: 8 }}>
@@ -430,6 +466,15 @@ export default function App() {
     });
   }, []);
 
+  const setPaymentRow = useCallback((i, field, val) => {
+    setData(prev => {
+      if (i === "_replace") return { ...prev, paymentRows: val };
+      if (i === "_add") return { ...prev, paymentRows: [...prev.paymentRows, { stage: "", client: "", subs: "" }] };
+      const rows = prev.paymentRows.map((r, j) => j === i ? { ...r, [field]: val } : r);
+      return { ...prev, paymentRows: rows };
+    });
+  }, []);
+
   if (!loaded) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f8fafc", fontFamily: "system-ui" }}>
@@ -563,12 +608,8 @@ export default function App() {
         <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '24px 0' }} />
         {/* 04 · PAYMENT STATUS */}
         <SectionHead title="Payment Status" index={3} />
-        <TwoCol>
-          <Field label="Client Payments" value={data.clientPayments} onChange={v => set("clientPayments", v)}
-            type="textarea" placeholder="Enter invoices paid to date per contract payment milestones" />
-          <Field label="Sub-Consultant Payments" value={data.subsPayments} onChange={v => set("subsPayments", v)}
-            type="textarea" placeholder="Enter subs invoices paid to date per contract payment milestones" />
-        </TwoCol>
+        <PaymentTable rows={data.paymentRows} onChange={setPaymentRow} />
+        
 
         
         </div>
