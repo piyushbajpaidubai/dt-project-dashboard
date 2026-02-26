@@ -553,8 +553,15 @@ export default function App() {
       fontFamily: "'DM Sans', 'IBM Plex Sans', system-ui, sans-serif",
       color: "#0f172a",
     }}>
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          @page { size: A3 landscape; margin: 10mm; }
+        }
+      `}</style>
       {/* ── TOP NAV ──────────────────────────────────────────────────────── */}
-      <div style={{
+      <div className="no-print" style={{
         position: "sticky", top: 0, zIndex: 100,
         background: "#ffffff",
         borderBottom: "1px solid #e2e8f0",
@@ -597,6 +604,23 @@ export default function App() {
         <div style={{ fontSize: 11, color: saving ? "#f59e0b" : "#10b981", letterSpacing: "0.04em", minWidth: 80, textAlign: "right" }}>
           {saving ? "Saving…" : savedAt ? `Saved ${savedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}
         </div>
+
+        {/* PDF Download */}
+        <button
+          className="no-print"
+          onClick={() => window.print()}
+          style={{
+            display: "flex", alignItems: "center", gap: 6,
+            background: "#0f172a", color: "#ffffff",
+            border: "none", borderRadius: 6,
+            padding: "6px 14px", fontSize: 11,
+            fontWeight: 700, letterSpacing: "0.06em",
+            cursor: "pointer", textTransform: "uppercase",
+            fontFamily: "inherit",
+          }}
+        >
+          ↓ Download PDF
+        </button>
       </div>
 
       {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
