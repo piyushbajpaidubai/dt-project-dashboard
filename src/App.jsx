@@ -611,13 +611,13 @@ export default function App() {
       {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
       <div style={{ 
         display: "grid",
-        gridTemplateColumns: "1fr 1.1fr 1fr",
-        gap: "0 28px",
-        padding: "28px 32px 60px",
+        gridTemplateColumns: "1fr 1fr 1fr",
+        gap: "0",
+        padding: "28px 0px 60px",
         alignItems: "start",
       }}>
         {/* COLUMN 1 */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, borderRight: "3px solid white", padding: "0 28px" }}>
         {/* 01 · PROJECT OVERVIEW */}
         <SectionHead title="Project Overview" index={0} />
         <TwoCol>
@@ -685,7 +685,7 @@ export default function App() {
         </div>
 
         {/* COLUMN 2 */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, borderRight: "3px solid white", padding: "0 28px" }}>
         {/* 03 · BUDGET & FINANCIALS */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
           <SectionHead title="Budget & Financials" index={2} />
@@ -766,7 +766,7 @@ export default function App() {
         </div>
 
         {/* COLUMN 3 */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, padding: "0 28px" }}>
         {/* 05 · PROGRAM */}
         <SectionHead title="Program" index={4} />
         <ProgramTable rows={data.programRows} onChange={setProgramRow} />
