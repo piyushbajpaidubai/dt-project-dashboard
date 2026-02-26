@@ -64,15 +64,11 @@ const defaultState = {
   potentialVariations: "",
   criticalIssues: "",
   currentActions: [
-    { action: "", owner: "", date: "" },
-    { action: "", owner: "", date: "" },
-    { action: "", owner: "", date: "" },
+    { action: "", owner: "" },
+    { action: "", owner: "" },
+    { action: "", owner: "" },
   ],
-  nextActions: [
-    { action: "", owner: "", date: "" },
-    { action: "", owner: "", date: "" },
-    { action: "", owner: "", date: "" },
-  ],
+
 };
 
 // ─── TINY COMPONENTS ─────────────────────────────────────────────────────────
@@ -231,7 +227,6 @@ function ActionTable({ rows, onChange, label }) {
             <th style={styles.th}>#</th>
             <th style={{ ...styles.th, width: "60%", textAlign: "left" }}>Action</th>
             <th style={styles.th}>Owner</th>
-            <th style={styles.th}>Date</th>
             <th style={{ ...styles.th, width: 32 }}></th>
           </tr>
         </thead>
@@ -248,10 +243,6 @@ function ActionTable({ rows, onChange, label }) {
                 <input value={row.owner} onChange={e => onChange(i, "owner", e.target.value)}
                   placeholder="Name"
                   style={{ ...styles.inlineInput, textAlign: "center" }} />
-              </td>
-              <td style={styles.td}>
-                <input type="date" value={row.date} onChange={e => onChange(i, "date", e.target.value)}
-                  style={{ ...styles.inlineInput, textAlign: "center", fontSize: 11 }} />
               </td>
               <td style={styles.td}>
                 <button onClick={() => {
@@ -530,7 +521,7 @@ export default function App() {
   const setActionRow = useCallback((key, i, field, val) => {
     setData(prev => {
       if (i === "_replace") return { ...prev, [key]: val };
-      if (i === "_add") return { ...prev, [key]: [...prev[key], { action: "", owner: "", date: "" }] };
+      if (i === "_add") return { ...prev, [key]: [...prev[key], { action: "", owner: "" }] };
       const rows = prev[key].map((r, j) => j === i ? { ...r, [field]: val } : r);
       return { ...prev, [key]: rows };
     });
@@ -787,19 +778,12 @@ export default function App() {
         
         <hr style={{ border: 'none', borderTop: '1.5px dashed #334155', margin: '24px 0' }} />
         {/* 07 · ACTIONS */}
-        <SectionHead title="Weekly Actions" index={6} />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 40px" }}>
-          <ActionTable
-            label="This Week's Actions"
+        <SectionHead title="Action List" index={6} />
+        <ActionTable
+            label="Action List"
             rows={data.currentActions}
             onChange={(i, field, val) => setActionRow("currentActions", i, field, val)}
           />
-          <ActionTable
-            label="Next Week's Actions"
-            rows={data.nextActions}
-            onChange={(i, field, val) => setActionRow("nextActions", i, field, val)}
-          />
-        </div>
 
      
         </div>
