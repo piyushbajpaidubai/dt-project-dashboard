@@ -285,8 +285,76 @@ function PaymentTable({ rows, onChange }) {
           {rows.map((row, i) => (
             <tr key={i}>
               <td style={styles.td}><input value={row.stage} onChange={e => onChange(i, "stage", e.target.value)} placeholder="Stage name" style={styles.inlineInput} /></td>
-              <td style={styles.td}><input value={row.client} onChange={e => onChange(i, "client", e.target.value)} placeholder="AED —" style={styles.inlineInput} /></td>
-              <td style={styles.td}><input value={row.subs} onChange={e => onChange(i, "subs", e.target.value)} placeholder="AED —" style={styles.inlineInput} /></td>
+              <td style={styles.td}>{(() => {
+                const pv = row.client;
+                const pColors = {
+                  "In Process": { bg: "#dbeafe", color: "#1d4ed8" },
+                  "Received":   { bg: "#dcfce7", color: "#15803d" },
+                  "Delayed":    { bg: "#fee2e2", color: "#b91c1c" },
+                };
+                const pc = pColors[pv] || { bg: "#f1f5f9", color: "#64748b" };
+                return (
+                  <select
+                    value={pv}
+                    onChange={e => onChange(i, "client", e.target.value)}
+                    style={{
+                      background: pc.bg,
+                      color: pc.color,
+                      fontWeight: 700,
+                      fontSize: 11,
+                      letterSpacing: "0.07em",
+                      border: "none",
+                      borderRadius: 4,
+                      padding: "3px 8px",
+                      cursor: "pointer",
+                      outline: "none",
+                      textTransform: "uppercase",
+                      fontFamily: "inherit",
+                      width: "100%",
+                    }}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="In Process">In Process</option>
+                    <option value="Received">Received</option>
+                    <option value="Delayed">Delayed</option>
+                  </select>
+                );
+              })()}</td>
+              <td style={styles.td}>{(() => {
+                const pv = row.subs;
+                const pColors = {
+                  "In Process": { bg: "#dbeafe", color: "#1d4ed8" },
+                  "Received":   { bg: "#dcfce7", color: "#15803d" },
+                  "Delayed":    { bg: "#fee2e2", color: "#b91c1c" },
+                };
+                const pc = pColors[pv] || { bg: "#f1f5f9", color: "#64748b" };
+                return (
+                  <select
+                    value={pv}
+                    onChange={e => onChange(i, "subs", e.target.value)}
+                    style={{
+                      background: pc.bg,
+                      color: pc.color,
+                      fontWeight: 700,
+                      fontSize: 11,
+                      letterSpacing: "0.07em",
+                      border: "none",
+                      borderRadius: 4,
+                      padding: "3px 8px",
+                      cursor: "pointer",
+                      outline: "none",
+                      textTransform: "uppercase",
+                      fontFamily: "inherit",
+                      width: "100%",
+                    }}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="In Process">In Process</option>
+                    <option value="Received">Received</option>
+                    <option value="Delayed">Delayed</option>
+                  </select>
+                );
+              })()}</td>
               <td style={styles.td}><button onClick={() => {
                 const next = rows.filter((_, j) => j !== i);
                 onChange("_replace", null, next);
