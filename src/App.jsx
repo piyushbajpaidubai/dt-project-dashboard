@@ -323,9 +323,10 @@ function PaymentTable({ rows, onChange }) {
               <td style={styles.td}>{(() => {
                 const pv = row.subs;
                 const pColors = {
+                  "Paid":       { bg: "#dcfce7", color: "#15803d" },
                   "In Process": { bg: "#dbeafe", color: "#1d4ed8" },
-                  "Received":   { bg: "#dcfce7", color: "#15803d" },
                   "Delayed":    { bg: "#fee2e2", color: "#b91c1c" },
+                  "On Hold":    { bg: "#ffedd5", color: "#c2410c" },
                 };
                 const pc = pColors[pv] || { bg: "#f1f5f9", color: "#64748b" };
                 return (
@@ -349,9 +350,10 @@ function PaymentTable({ rows, onChange }) {
                     }}
                   >
                     <option value="">— Select —</option>
+                    <option value="Paid">Paid</option>
                     <option value="In Process">In Process</option>
-                    <option value="Received">Received</option>
                     <option value="Delayed">Delayed</option>
+                    <option value="On Hold">On Hold</option>
                   </select>
                 );
               })()}</td>
