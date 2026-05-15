@@ -76,7 +76,8 @@ function formatWeekLabel(date) {
 const defaultState = {
   projectCode: "", projectName: "", client: "",
   reportDate: new Date().toISOString().slice(0, 10),
-  keyPersonnel: "", teamThisWeek: "", subconsultants: "", contractStatus: "", contractValue: "",
+  keyPersonnel: "", teamThisWeek: "", subconsultantRows: [{ name: "", contractStatus: "" }],
+  contractStatus: "", contractValue: "",
   budgetStatus: "", internalBudget: "", externalBudget: "", availableBudget: "",
   actualSpent: "", invoiceIssued: "", externalSpent: "",
   projectStatus: "", progressPct: "", targetInvoice: "", invoiceDueDate: "",
@@ -203,11 +204,11 @@ function RiskStatusBar({ value, onChange }) {
 
 function ActionStatusBar({ value, onChange }) {
   const opts = [
+    { value: "done", label: "Done", bg: "#22c55e", fg: "#ffffff" },
     { value: "pending", label: "Pending", bg: "#f97316", fg: "#ffffff" },
+    { value: "on_going", label: "On Going", bg: "#0ea5e9", fg: "#ffffff" },
     { value: "delayed", label: "Delayed", bg: "#ef4444", fg: "#ffffff" },
-    { value: "on_track", label: "On-Track", bg: "#22c55e", fg: "#ffffff" },
     { value: "hold", label: "Hold", bg: "#3b82f6", fg: "#ffffff" },
-    { value: "closed", label: "Closed", bg: "#9ca3af", fg: "#ffffff" },
   ];
   const sel = opts.find(o => o.value === value);
   const bg = sel ? sel.bg : "#e2e8f0";
@@ -215,6 +216,26 @@ function ActionStatusBar({ value, onChange }) {
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
       <select value={value || ""} onChange={e => onChange(e.target.value)} style={{ appearance: "none", background: bg, color: fg, border: "none", borderRadius: 4, padding: "3px 24px 3px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 90 }}>
+        <option value="">Select</option>
+        {opts.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+      <span style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", fontSize: 10, color: fg }}>v</span>
+    </div>
+  );
+}
+
+function SubContractStatusBar({ value, onChange }) {
+  const opts = [
+    { value: "signed", label: "Signed", bg: "#22c55e", fg: "#ffffff" },
+    { value: "pending", label: "Pending", bg: "#f97316", fg: "#ffffff" },
+    { value: "in_process", label: "In-Process", bg: "#0ea5e9", fg: "#ffffff" },
+  ];
+  const sel = opts.find(o => o.value === value);
+  const bg = sel ? sel.bg : "#e2e8f0";
+  const fg = sel ? sel.fg : "#64748b";
+  return (
+    <div style={{ position: "relative", display: "inline-block" }}>
+      <select value={value || ""} onChange={e => onChange(e.target.value)} style={{ appearance: "none", background: bg, color: fg, border: "none", borderRadius: 4, padding: "3px 24px 3px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 100 }}>
         <option value="">Select</option>
         {opts.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
@@ -257,9 +278,37 @@ function ActionTable({ rows, onChange }) {
           {rows.map((row, i) => (
             <tr key={i}>
               <td style={styles.tdNum}>{String(i + 1).padStart(2, "0")}</td>
-              <td style={styles.td}><textarea value={row.action} onChange={e => { onChange(i, "action", e.target.value); e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }} onInput={e => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }} placeholder="Enter action item..." style={{ ...styles.inlineInput, resize: "none", minHeight: 32, height: "auto", overflow: "hidden", lineHeight: "1.4", padding: "4px 6px", boxSizing: "border-box", display: "block", width: "100%" }} rows={1} /></td>
+              <td style={styles.td}><textarea ref={el => { if (el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; } }} value={row.action} onChange={e => { onChange(i, "action", e.target.value); e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }} onInput={e => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }} placeholder="Enter action item..." style={{ ...styles.inlineInput, resize: "none", minHeight: 32, height: "auto", overflow: "hidden", lineHeight: "1.4", padding: "4px 6px", boxSizing: "border-box", display: "block", width: "100%", fontFamily: "inherit" }} rows={1} /></td>
               <td style={styles.td}><input value={row.owner} onChange={e => onChange(i, "owner", e.target.value)} placeholder="Name" style={{ ...styles.inlineInput, textAlign: "center" }} /></td>
-              <td style={styles.td}><RiskStatusBar value={row.status || ""} onChange={v => onChange(i, "status", v)} /></td>
+              <td style={styles.td}><ActionStatusBar value={row.status || ""} onChange={v => onChange(i, "status", v)} /></td>
+              <td style={styles.td}><button onClick={() => { const next = rows.filter((_, j) => j !== i); onChange("_replace", null, next); }} style={styles.delBtn}>X</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={() => onChange("_add", null, null)} style={styles.addBtn}>+ Add row</button>
+    </div>
+  );
+}
+
+function SubconsultantsTable({ rows, onChange }) {
+  return (
+    <div style={{ marginBottom: 8 }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th style={styles.th}>#</th>
+            <th style={{ ...styles.th, width: "60%", textAlign: "left" }}>Sub-Consultant</th>
+            <th style={{ ...styles.th, textAlign: "center", width: "22%" }}>Sub-Contract Status</th>
+            <th style={{ ...styles.th, width: 32 }}></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>
+              <td style={styles.tdNum}>{String(i + 1).padStart(2, "0")}</td>
+              <td style={styles.td}><input value={row.name} onChange={e => onChange(i, "name", e.target.value)} placeholder="Enter sub-consultant name..." style={{ ...styles.inlineInput, width: "100%" }} /></td>
+              <td style={{ ...styles.td, textAlign: "center" }}><SubContractStatusBar value={row.contractStatus || ""} onChange={v => onChange(i, "contractStatus", v)} /></td>
               <td style={styles.td}><button onClick={() => { const next = rows.filter((_, j) => j !== i); onChange("_replace", null, next); }} style={styles.delBtn}>X</button></td>
             </tr>
           ))}
@@ -290,12 +339,12 @@ function ProgramTable({ rows, onChange }) {
           {rows.map((row, i) => (
             <tr key={i}>
               <td style={styles.td}><input value={row.stage} onChange={e => onChange(i, "stage", e.target.value)} placeholder="Stage name" style={styles.inlineInput} /></td>
-              <td style={styles.td}><input value={row.baseline} onChange={e => onChange(i, "baseline", e.target.value)} placeholder="e.g. 8 weeks" style={styles.inlineInput} /></td>
-              <td style={styles.td}><input value={row.baselineStart} onChange={e => onChange(i, "baselineStart", e.target.value)} placeholder="dd/mm" style={{ ...styles.inlineInput, textAlign: "center" }} /></td>
-              <td style={styles.td}><input value={row.baselineEnd} onChange={e => onChange(i, "baselineEnd", e.target.value)} placeholder="dd/mm" style={{ ...styles.inlineInput, textAlign: "center" }} /></td>
-              <td style={styles.td}><input value={row.actual} onChange={e => onChange(i, "actual", e.target.value)} placeholder="e.g. 10 weeks" style={styles.inlineInput} /></td>
-              <td style={styles.td}><input value={row.actualStart} onChange={e => onChange(i, "actualStart", e.target.value)} placeholder="dd/mm" style={{ ...styles.inlineInput, textAlign: "center" }} /></td>
-              <td style={styles.td}><input value={row.actualEnd} onChange={e => onChange(i, "actualEnd", e.target.value)} placeholder="dd/mm" style={{ ...styles.inlineInput, textAlign: "center" }} /></td>
+              <td style={styles.td}>{(() => { if (row.baselineStart && row.baselineEnd) { const s = new Date(row.baselineStart), e = new Date(row.baselineEnd); const days = Math.round((e - s) / 86400000); if (days < 0) return <span style={{ color: "#ef4444", fontSize: 12 }}>Invalid</span>; const w = Math.floor(days / 7), d = days % 7; const label = w > 0 && d > 0 ? w + "w " + d + "d" : w > 0 ? w + " week" + (w !== 1 ? "s" : "") : d + " day" + (d !== 1 ? "s" : ""); return <span style={{ fontSize: 13, color: "#0f172a", fontWeight: 500 }}>{label}</span>; } return <input value={row.baseline} onChange={e => onChange(i, "baseline", e.target.value)} placeholder="e.g. 8 weeks" style={styles.inlineInput} />; })()}</td>
+              <td style={styles.td}><input type="date" value={row.baselineStart} onChange={e => onChange(i, "baselineStart", e.target.value)} style={{ ...styles.inlineInput, textAlign: "center", cursor: "pointer", colorScheme: "light", minWidth: 36 }} /></td>
+              <td style={styles.td}><input type="date" value={row.baselineEnd} onChange={e => onChange(i, "baselineEnd", e.target.value)} style={{ ...styles.inlineInput, textAlign: "center", cursor: "pointer", colorScheme: "light", minWidth: 36 }} /></td>
+              <td style={styles.td}>{(() => { if (row.actualStart && row.actualEnd) { const s = new Date(row.actualStart), e = new Date(row.actualEnd); const days = Math.round((e - s) / 86400000); if (days < 0) return <span style={{ color: "#ef4444", fontSize: 12 }}>Invalid</span>; const w = Math.floor(days / 7), d = days % 7; const label = w > 0 && d > 0 ? w + "w " + d + "d" : w > 0 ? w + " week" + (w !== 1 ? "s" : "") : d + " day" + (d !== 1 ? "s" : ""); return <span style={{ fontSize: 13, color: "#0f172a", fontWeight: 500 }}>{label}</span>; } return <input value={row.actual} onChange={e => onChange(i, "actual", e.target.value)} placeholder="e.g. 10 weeks" style={styles.inlineInput} />; })()}</td>
+              <td style={styles.td}><input type="date" value={row.actualStart} onChange={e => onChange(i, "actualStart", e.target.value)} style={{ ...styles.inlineInput, textAlign: "center", cursor: "pointer", colorScheme: "light", minWidth: 36 }} /></td>
+              <td style={styles.td}><input type="date" value={row.actualEnd} onChange={e => onChange(i, "actualEnd", e.target.value)} style={{ ...styles.inlineInput, textAlign: "center", cursor: "pointer", colorScheme: "light", minWidth: 36 }} /></td>
               <td style={styles.td}><button onClick={() => { const next = rows.filter((_, j) => j !== i); onChange("_replace", null, next); }} style={styles.delBtn}>X</button></td>
             </tr>
           ))}
@@ -739,38 +788,127 @@ function CashVarianceChart({ budgetHistory, invoiceIssued, externalSpent, actual
 }
 
 
-const STAFF_OPTIONS = [
-  { name: "Dara John Towhidi", photo: "https://designtomorrow.com/wp-content/uploads/2023/08/Dara.jpg" },
-  { name: "Maya", photo: "https://designtomorrow.com/wp-content/uploads/2024/08/Maya.jpg" },
-  { name: "Munehiko", photo: "https://designtomorrow.com/wp-content/uploads/2025/10/Mune.png" },
-  { name: "Luca", photo: "https://designtomorrow.com/wp-content/uploads/2023/08/Luca.jpg" },
-  { name: "Nacho", photo: "https://designtomorrow.com/wp-content/uploads/2026/03/Gemini_Generated_Image_zazx1tzazx1tzazx.png" },
-  { name: "Fay", photo: "https://designtomorrow.com/wp-content/uploads/2026/02/Fay-BW-revised.png" },
-  { name: "George", photo: "https://designtomorrow.com/wp-content/uploads/2023/10/George.jpg" },
-  { name: "Ibrahim", photo: "https://designtomorrow.com/wp-content/uploads/2026/03/Ibrahim.png" },
-  { name: "Bruno", photo: "https://designtomorrow.com/wp-content/uploads/2026/02/Bruno-gemini.png" },
-  { name: "Alexander", photo: "https://designtomorrow.com/wp-content/uploads/2026/03/Alex-2-1.png" },
-  { name: "Arian", photo: "https://designtomorrow.com/wp-content/uploads/2023/08/Arian.jpg" },
-  { name: "Dina", photo: "https://designtomorrow.com/wp-content/uploads/2025/06/Dina_Website-scaled.jpg" },
-  { name: "Karim", photo: "https://designtomorrow.com/wp-content/uploads/2025/06/Karim_ForWebsite-scaled.jpg" },
-  { name: "Carlo Alberto", photo: "https://designtomorrow.com/wp-content/uploads/2024/09/Carlo.jpg" },
-  { name: "Alvaro", photo: "https://designtomorrow.com/wp-content/uploads/2025/12/Alvaro-NEW.png" },
-  { name: "Salvador", photo: "https://designtomorrow.com/wp-content/uploads/2025/10/salva.png" },
-  { name: "Saanchi", photo: "https://designtomorrow.com/wp-content/uploads/2024/08/Saanchi.jpg" },
-  { name: "Yara", photo: "https://designtomorrow.com/wp-content/uploads/2024/08/Yara.jpg" },
-  { name: "Tejas", photo: "https://designtomorrow.com/wp-content/uploads/2025/12/Tejas_BNW.png" },
-  { name: "Sapta", photo: "https://designtomorrow.com/wp-content/uploads/2026/03/Sapta.png" },
-  { name: "Hamza", photo: "https://designtomorrow.com/wp-content/uploads/2026/03/IMG_5206-1.png" },
-  { name: "Nadim", photo: "https://designtomorrow.com/wp-content/uploads/2026/02/Nadim-New.png" },
-  { name: "Joan", photo: "https://designtomorrow.com/wp-content/uploads/2025/10/Joan-2.png" },
-  { name: "Yomna", photo: "https://designtomorrow.com/wp-content/uploads/2026/02/Yomna-resized-1.png" },
-  { name: "Luisa", photo: "https://designtomorrow.com/wp-content/uploads/2025/10/Luisa.png" },
-  { name: "Shell", photo: "https://designtomorrow.com/wp-content/uploads/2026/03/Shell-1.png" },
-  { name: "Melissa", photo: "https://designtomorrow.com/wp-content/uploads/2025/10/Meli.png" },
-];
+// --- CPI TREND CHART --------------------------------------------------------
+function CPITrendChart({ budgetHistory, onManualUpdate }) {
+  const W = 820, H = 320;
+  const PAD = { top: 24, right: 24, bottom: 52, left: 64 };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+  const [justUpdated, setJustUpdated] = useState(false);
+  const weeks = generateWeekLabels();
+  const dataPoints = weeks.map(weekDate => {
+    const key = getMondaySnapshotKey(weekDate);
+    const snap = budgetHistory[key];
+    return { date: weekDate, label: formatWeekLabel(weekDate), cpi: (snap && snap.cpi != null) ? snap.cpi : null };
+  });
+  const cpiVals = dataPoints.map(p => p.cpi).filter(v => v !== null);
+  const dataMax = cpiVals.length ? Math.max(...cpiVals) : 2;
+  const yMax = Math.max(dataMax * 1.2, 2);
+  const yMin = 0;
+  const yRange = yMax - yMin;
+  const xPos = i => PAD.left + (i / Math.max(weeks.length - 1, 1)) * chartW;
+  const yPos = v => PAD.top + chartH - ((v - yMin) / yRange) * chartH;
+  const yTicks = Array.from({ length: 5 }, (_, i) => parseFloat((yMin + (yRange / 4) * i).toFixed(2)));
+  const now = new Date();
+  let todayIdx = -1;
+  for (let i = weeks.length - 1; i >= 0; i--) { if (weeks[i] <= now) { todayIdx = i; break; } }
+  const currentKey = getNextMondayKey(now);
+  const currentSnap = budgetHistory[currentKey];
+  const currentWeekLabel = formatWeekLabel(keyToDate(currentKey));
+  const hasData = dataPoints.some(p => p.cpi !== null);
+  let linePath = "";
+  let started = false;
+  dataPoints.forEach((pt, i) => {
+    if (pt.cpi === null) { started = false; return; }
+    const x = xPos(i), y = yPos(pt.cpi);
+    if (!started) { linePath += `M${x},${y}`; started = true; } else { linePath += ` L${x},${y}`; }
+  });
+  const handleUpdate = () => { onManualUpdate(); setJustUpdated(true); setTimeout(() => setJustUpdated(false), 2500); };
+  return (
+    <div style={{ marginTop: 28, marginBottom: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: "#94a3b8", textTransform: "uppercase" }}>CPI Trend - Weekly Snapshot (Mondays 18:00)</div>
+        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 24, height: 3, background: "#8b5cf6", borderRadius: 2 }} />
+            <span style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>CPI</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 24, height: 0, borderTop: "2px dashed #94a3b8" }} />
+            <span style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>Target = 1.0</span>
+          </div>
+        </div>
+      </div>
+      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden" }}>
+        <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: "block" }}>
+          {yTicks.map((tick, i) => (
+            <g key={i}>
+              <line x1={PAD.left} y1={yPos(tick)} x2={PAD.left + chartW} y2={yPos(tick)} stroke="#f1f5f9" strokeWidth="1" />
+              <text x={PAD.left - 8} y={yPos(tick) + 4} textAnchor="end" style={{ fontSize: 10, fill: "#94a3b8", fontFamily: "system-ui" }}>{tick.toFixed(2)}</text>
+            </g>
+          ))}
+          {weeks.map((w, i) => {
+            if (i % Math.max(1, Math.floor(weeks.length / 8)) !== 0) return null;
+            return (<text key={i} x={xPos(i)} y={PAD.top + chartH + 20} textAnchor="middle" style={{ fontSize: 9, fill: "#94a3b8", fontFamily: "system-ui" }}>{formatWeekLabel(w)}</text>);
+          })}
+          {weeks.map((w, i) => (<line key={i} x1={xPos(i)} y1={PAD.top + chartH} x2={xPos(i)} y2={PAD.top + chartH + 4} stroke="#e2e8f0" strokeWidth="1" />))}
+          {yPos(1.0) >= PAD.top && yPos(1.0) <= PAD.top + chartH && (
+            <g>
+              <line x1={PAD.left} y1={yPos(1.0)} x2={PAD.left + chartW} y2={yPos(1.0)} stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="6,4" opacity="0.7" />
+              <text x={PAD.left + chartW + 4} y={yPos(1.0) + 4} style={{ fontSize: 9, fill: "#94a3b8", fontFamily: "system-ui", fontWeight: 700 }}>1.0</text>
+            </g>
+          )}
+          {todayIdx >= 0 && (
+            <g>
+              <line x1={xPos(todayIdx)} y1={PAD.top} x2={xPos(todayIdx)} y2={PAD.top + chartH} stroke="#0ea5e9" strokeWidth="1" strokeDasharray="4,3" opacity="0.6" />
+              <text x={xPos(todayIdx) + 4} y={PAD.top + 12} style={{ fontSize: 9, fill: "#0ea5e9", fontFamily: "system-ui", fontWeight: 700 }}>Current Week</text>
+            </g>
+          )}
+          <line x1={PAD.left} y1={PAD.top} x2={PAD.left} y2={PAD.top + chartH} stroke="#e2e8f0" strokeWidth="1.5" />
+          <line x1={PAD.left} y1={PAD.top + chartH} x2={PAD.left + chartW} y2={PAD.top + chartH} stroke="#e2e8f0" strokeWidth="1.5" />
+          <text x={16} y={PAD.top + chartH / 2} textAnchor="middle" transform={`rotate(-90, 16, ${PAD.top + chartH / 2})`} style={{ fontSize: 10, fill: "#94a3b8", fontFamily: "system-ui", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>CPI</text>
+          <text x={PAD.left + chartW / 2} y={H - 6} textAnchor="middle" style={{ fontSize: 10, fill: "#94a3b8", fontFamily: "system-ui", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>Weeks</text>
+          {hasData && (
+            <>
+              <path d={linePath} fill="none" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              {dataPoints.map((pt, i) => pt.cpi !== null && (
+                <g key={`cpi-${i}`}>
+                  <circle cx={xPos(i)} cy={yPos(pt.cpi)} r={4} fill={pt.cpi >= 1 ? "#22c55e" : "#ef4444"} stroke="#ffffff" strokeWidth="1.5" />
+                  <title>CPI - {pt.label}: {pt.cpi.toFixed(2)}</title>
+                </g>
+              ))}
+            </>
+          )}
+          {!hasData && (
+            <text x={W / 2} y={H / 2} textAnchor="middle" style={{ fontSize: 12, fill: "#cbd5e1", fontFamily: "system-ui", fontWeight: 500 }}>
+              Data captured every Monday at 18:00 - click Update to record now
+            </text>
+          )}
+        </svg>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 12, marginTop: 10 }}>
+        {justUpdated && (
+          <span style={{ fontSize: 11, color: "#10b981", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+            <span style={{ fontSize: 13 }}>OK</span> Chart updated for week of {currentWeekLabel}
+          </span>
+        )}
+        {currentSnap && !justUpdated && currentSnap.cpi != null && (
+          <span style={{ fontSize: 11, color: "#94a3b8" }}>
+            Week of {currentWeekLabel}: CPI {currentSnap.cpi.toFixed(2)}
+          </span>
+        )}
+        <button onClick={handleUpdate} style={{ background: "#0f172a", color: "#ffffff", border: "none", borderRadius: 4, padding: "6px 16px", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 12 }}>Refresh</span> Update Chart
+        </button>
+      </div>
+    </div>
+  );
+}
+const STAFF_OPTIONS = [];
 
 function StaffPicker({ label, value, onChange }) {
   const [open, setOpen] = useState(false);
+  const [manualInput, setManualInput] = useState("");
   const ref = useRef(null);
   useEffect(() => {
     function handleClick(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false); }
@@ -778,21 +916,49 @@ function StaffPicker({ label, value, onChange }) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
   const selected = STAFF_OPTIONS.find(o => o.name === value);
+  const handleManualKeyDown = (e) => {
+    if (e.key === "Enter" && manualInput.trim()) {
+      e.preventDefault();
+      onChange(manualInput.trim());
+      setManualInput("");
+      setOpen(false);
+    }
+  };
   return (
     <div style={{ marginBottom: 14, position: "relative" }} ref={ref}>
       {label && <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: "#94a3b8", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>}
-      <div onClick={() => setOpen(o => !o)} style={{ fontSize: 13, color: value ? "#0f172a" : "#94a3b8", padding: "4px 0", borderBottom: "1.5px solid #e2e8f0", cursor: "pointer", minHeight: 28, display: "flex", alignItems: "center", gap: 8 }}>
-        {selected && <img src={selected.photo} alt={selected.name} style={{ width: 22, height: 22, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />}
-        {value || "Select person..."}
+      <div onClick={() => setOpen(o => !o)} style={{ fontSize: 13, color: value ? "#0f172a" : "#94a3b8", padding: "4px 0", borderBottom: "1.5px solid #e2e8f0", cursor: "pointer", minHeight: 28, display: "flex", alignItems: "center", gap: 6 }}>
+        {selected ? (
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "#f0f9ff", borderRadius: 99, padding: "2px 8px 2px 4px", fontSize: 12 }}>
+            <img src={selected.photo} alt={value} style={{ width: 18, height: 18, borderRadius: "50%", objectFit: "cover" }} />
+            {value}
+          </span>
+        ) : value ? (
+          <span style={{ fontSize: 12, color: "#0f172a" }}>{value}</span>
+        ) : "Select person..."}
+        {value && <span onClick={(e) => { e.stopPropagation(); onChange(""); setManualInput(""); }} style={{ marginLeft: "auto", fontSize: 11, color: "#94a3b8", cursor: "pointer" }}>&#x2715;</span>}
       </div>
       {open && (
         <div style={{ position: "absolute", top: "100%", left: 0, zIndex: 200, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 6, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", minWidth: 240, maxHeight: 260, overflowY: "auto" }}>
+          <div style={{ padding: "8px 10px", borderBottom: "1px solid #f1f5f9" }}>
+            <input
+              autoFocus
+              value={manualInput}
+              onChange={e => setManualInput(e.target.value)}
+              onKeyDown={handleManualKeyDown}
+              placeholder="Type a name & press Enter..."
+              style={{ width: "100%", border: "none", outline: "none", fontSize: 12, background: "transparent" }}
+            />
+          </div>
           {STAFF_OPTIONS.map(opt => (
-            <div key={opt.name} onClick={() => { onChange(opt.name); setOpen(false); }} style={{ padding: "7px 12px", fontSize: 13, cursor: "pointer", background: value === opt.name ? "#f0f9ff" : "transparent", color: value === opt.name ? "#0ea5e9" : "#0f172a", display: "flex", alignItems: "center", gap: 10 }}>
-              <img src={opt.photo} alt={opt.name} style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <div key={opt.name} onClick={() => { onChange(opt.name); setOpen(false); }} style={{ padding: "7px 12px", fontSize: 13, cursor: "pointer", background: value === opt.name ? "#f0f9ff" : "transparent", color: value === opt.name ? "#0f172a" : "#94a3b8", display: "flex", alignItems: "center", gap: 8 }}>
+              <img src={opt.photo} alt={opt.name} style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
               {opt.name}
             </div>
           ))}
+          {STAFF_OPTIONS.length === 0 && (
+            <div style={{ padding: "7px 12px", fontSize: 12, color: "#94a3b8" }}>Type a name above and press Enter</div>
+          )}
           <div onClick={() => { onChange(""); setOpen(false); }} style={{ padding: "7px 12px", fontSize: 12, cursor: "pointer", color: "#94a3b8", borderTop: "1px solid #f1f5f9" }}>
             Clear
           </div>
@@ -816,12 +982,26 @@ function StaffPickerMulti({ label, value, onChange }) {
     const next = selected.includes(opt) ? selected.filter(s => s !== opt) : [...selected, opt];
     onChange(next.join(", "));
   };
+  const addManual = () => {
+    const name = inputVal.trim();
+    if (name && !selected.includes(name)) {
+      const next = [...selected, name];
+      onChange(next.join(", "));
+    }
+    setInputVal("");
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addManual();
+    }
+  };
   const filtered = STAFF_OPTIONS.filter(o => o.name.toLowerCase().includes(inputVal.toLowerCase()));
   return (
     <div style={{ marginBottom: 14, position: "relative" }} ref={ref}>
-      {label && <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: "#94a3b8", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>}
-      <div onClick={() => setOpen(o => !o)} style={{ fontSize: 13, color: selected.length ? "#0f172a" : "#94a3b8", padding: "4px 0", borderBottom: "1.5px solid #e2e8f0", cursor: "pointer", minHeight: 28, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-        {selected.length ? selected.map(name => {
+      {label && <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>}
+      <div onClick={() => setOpen(o => !o)} style={{ fontSize: 13, color: selected.length ? "#0f172a" : "#94a3b8", padding: "4px 0", borderBottom: "1.5px solid #e2e8f0", cursor: "pointer", minHeight: 28, display: "flex", alignItems: "center", flexWrap: "wrap", gap: 4 }}>
+        {selected.length > 0 ? selected.map(name => {
           const member = STAFF_OPTIONS.find(o => o.name === name);
           return member ? (
             <span key={name} style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "#f0f9ff", borderRadius: 99, padding: "2px 8px 2px 4px", fontSize: 12 }}>
@@ -834,20 +1014,37 @@ function StaffPickerMulti({ label, value, onChange }) {
       {open && (
         <div style={{ position: "absolute", top: "100%", left: 0, zIndex: 200, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 6, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", minWidth: 260, maxHeight: 280, overflowY: "auto" }}>
           <div style={{ padding: "8px 10px", borderBottom: "1px solid #f1f5f9" }}>
-            <input autoFocus value={inputVal} onChange={e => setInputVal(e.target.value)} placeholder="Search..." style={{ width: "100%", border: "none", outline: "none", fontSize: 12, background: "transparent" }} />
+            <input
+              autoFocus
+              value={inputVal}
+              onChange={e => setInputVal(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a name & press Enter to add..."
+              style={{ width: "100%", border: "none", outline: "none", fontSize: 12, background: "transparent" }}
+            />
           </div>
           {filtered.map(opt => (
-            <div key={opt.name} onClick={() => toggle(opt.name)} style={{ padding: "7px 12px", fontSize: 13, cursor: "pointer", background: selected.includes(opt.name) ? "#f0f9ff" : "transparent", color: selected.includes(opt.name) ? "#0ea5e9" : "#0f172a", display: "flex", alignItems: "center", gap: 10 }}>
-              <img src={opt.photo} alt={opt.name} style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <div key={opt.name} onClick={() => toggle(opt.name)} style={{ padding: "7px 12px", fontSize: 13, cursor: "pointer", background: selected.includes(opt.name) ? "#f0f9ff" : "transparent", color: selected.includes(opt.name) ? "#0f172a" : "#94a3b8", display: "flex", alignItems: "center", gap: 8 }}>
+              <img src={opt.photo} alt={opt.name} style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
               <span style={{ flex: 1 }}>{opt.name}</span>
               {selected.includes(opt.name) && <span style={{ fontSize: 12, color: "#0ea5e9" }}>&#10003;</span>}
             </div>
           ))}
+          {filtered.length === 0 && inputVal && (
+            <div style={{ padding: "7px 12px", fontSize: 12, color: "#94a3b8" }}>
+              Press Enter to add "{inputVal}"
+            </div>
+          )}
+          {STAFF_OPTIONS.length === 0 && !inputVal && (
+            <div style={{ padding: "7px 12px", fontSize: 12, color: "#94a3b8" }}>Type a name above and press Enter</div>
+          )}
         </div>
       )}
     </div>
   );
 }
+
+
 const styles = {
   fieldLabel: { fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: "#94a3b8", textTransform: "uppercase", marginBottom: 4 },
   th: { fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: "#94a3b8", textTransform: "uppercase", borderBottom: "1px solid #e2e8f0", padding: "0 8px 8px 8px", textAlign: "center" },
@@ -938,6 +1135,7 @@ export default function App() {
         externalSpent: (parseFloat(prev.progressPct || "0") / 100) * (parseFloat((prev.externalBudget || "").replace(/[^0-9.-]/g, "")) || 0),
         ts: now.toISOString(),
         manuallyUpdated: true,
+        cpi: (() => { const parseV = v => parseFloat((v || "").replace(/[^0-9.-]/g, "")) || 0; const earned = parseV(prev.contractValue) * (parseV(prev.progressPct) / 100); const extSpent = (parseFloat(prev.progressPct || "0") / 100) * (parseFloat((prev.externalBudget || "").replace(/[^0-9.-]/g, "")) || 0); const totalSpent = extSpent + parseV(prev.actualSpent); return (totalSpent > 0) ? earned / totalSpent : null; })(),
       };
       return { ...prev, budgetHistory: { ...(prev.budgetHistory || {}), [key]: snap } };
     });
@@ -961,7 +1159,15 @@ export default function App() {
     });
   }, []);
 
-  const setPaymentRow = useCallback((i, field, val) => {
+  const setSubconsultantRow = useCallback((i, field, val) => {
+    setData(prev => {
+      if (i === "_replace") return { ...prev, subconsultantRows: val };
+      if (i === "_add") return { ...prev, subconsultantRows: [...(prev.subconsultantRows || []), { name: "", contractStatus: "" }] };
+      return { ...prev, subconsultantRows: (prev.subconsultantRows || []).map((r, j) => j === i ? { ...r, [field]: val } : r) };
+    });
+  }, []);
+
+    const setPaymentRow = useCallback((i, field, val) => {
     setData(prev => {
       if (i === "_replace") return { ...prev, paymentRows: val };
       if (i === "_add") return { ...prev, paymentRows: [...prev.paymentRows, { milestone: "", clientStatus: "", subsStatus: "" }] };
@@ -982,7 +1188,7 @@ export default function App() {
   return (
     <div style={{ position: "relative", minHeight: "100vh", background: "#f8fafc", fontFamily: "'DM Sans', system-ui, sans-serif", color: "#0f172a" }}>
       <div style={{ position: "sticky", top: 0, zIndex: 100, background: "#ffffff", borderBottom: "1px solid #e2e8f0", display: "flex", alignItems: "center", padding: "0 32px", height: 52, gap: 20 }}>
-        <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.05em", color: "#0f172a", borderRight: "1px solid #e2e8f0", paddingRight: 20, marginRight: 4 }}>DesignTomorrow</div>
+        <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.05em", color: "#0f172a", borderRight: "1px solid #e2e8f0", paddingRight: 20, marginRight: 4 }}>Project Dashboard</div>
         <input value={data.projectCode} onChange={e => set("projectCode", e.target.value)} placeholder="PROJECT CODE" style={{ ...navInput, width: 110, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }} />
         <span style={{ color: "#e2e8f0" }}>.</span>
         <input value={data.projectName} onChange={e => set("projectName", e.target.value)} placeholder="Project Name" style={{ ...navInput, width: 200 }} />
@@ -1009,7 +1215,7 @@ export default function App() {
           <div><div style={styles.fieldLabel}>Contract Status</div><div style={{ marginBottom: 14, paddingTop: 4 }}><StatusBadge value={data.contractStatus} onChange={v => set("contractStatus", v)} /></div></div>
         </TwoCol>
         <StaffPickerMulti label="Team This Week" value={data.teamThisWeek} onChange={v => set("teamThisWeek", v)} />
-        <Field label="Subconsultants" value={data.subconsultants} onChange={v => set("subconsultants", v)} type="textarea" placeholder="List all sub-consultants" />
+        <div style={{ marginBottom: 14 }}><div style={styles.fieldLabel}>Subconsultants</div><SubconsultantsTable rows={data.subconsultantRows || []} onChange={(i, field, val) => setSubconsultantRow(i, field, val)} /></div>
         <Field label="Contract Value" value={data.contractValue} onChange={v => set("contractValue", v)} placeholder="AED" numeric={true} />
         <PageBreak />
 
@@ -1065,6 +1271,11 @@ export default function App() {
               (parseFloat((data.externalBudget || "").replace(/[^0-9.-]/g, "")) || 0)
             )}
             actualSpent={data.actualSpent}
+            onManualUpdate={handleManualUpdate}
+          />
+          {/* CPI TREND CHART */}
+          <CPITrendChart
+            budgetHistory={data.budgetHistory || {}}
             onManualUpdate={handleManualUpdate}
           />
         </>}
